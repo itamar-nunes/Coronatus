@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Menu">
+	<typeAlias alias="Menu" type="com.attinix.coronatus.client.model.Menu" />
+
+	<resultMap id="menuResult" class="Menu">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="enderecoWeb" column="ENDERECOWEB" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="menuResultMenuSelecionado" class="Menu"
+		extends="menuResult">
+		<result property="selecionado" column="SELECIONADO" javaType="java.lang.Integer" />
+	</resultMap>
+
+	<sql id="selectMenu">
+		SELECT
+		Menu.*
+		FROM
+		Menu
+    </sql>
+
+	<sql id="selectMenuPerfilMenu">
+		SELECT
+		Menu.*,
+		IF(ISNULL(PERFILMENU.MENU_ID),0,1) AS
+		SELECIONADO
+		FROM
+		Menu
+    </sql>
+
+	<select id="retrieveAllMenu" resultMap="menuResult">
+		<include refid="selectMenu" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveMenu" resultMap="menuResult" parameterClass="java.lang.Integer">
+		<include refid="selectMenu" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveMenuPorPerfilId" resultMap="menuResultMenuSelecionado"
+		parameterClass="java.lang.Integer">
+		<include refid="selectMenuPerfilMenu" />
+		LEFT JOIN perfilmenu
+		ON MENU.ID = perfilmenu.MENU_ID
+		AND
+		perfilmenu.PERFIL_ID = #VALUE#
+		ORDER
+		BY MENU.ID
+	</select>
+
+	<select id="retrieveMenuPorUsuarioEmpresa" resultMap="menuResult"
+		parameterClass="map">
+		select menu.id,menu.nome,enderecoWeb
+		from usuario
+		inner
+		join empresa on usuario.GrupoEmpresa_id = empresa.GrupoEmpresa_id
+		inner join acesso on acesso.Usuario_id = usuario.id and empresa.id =
+		acesso.Empresa_id
+		inner join perfilmenu on perfilmenu.Perfil_id =
+		acesso.Perfil_id
+		inner join menu on menu.id = perfilmenu.Menu_id
+		where
+		usuario.id= #usuarioId# and empresa.id= #empresaId#
+	</select>
+
+	<insert id="createMenu" parameterClass="Menu">
+		INSERT INTO
+		MENU
+		(NOME,
+		ENDERECOWEB)
+		VALUES
+		(#nome#,
+		#enderecoWeb#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateMenu" parameterClass="Menu">
+		UPDATE
+		MENU
+		SET
+		NOME =
+		#nome#,
+		ENDERECOWEB = #enderecoWeb#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteMenu" parameterClass="java.lang.Integer">
+		DELETE FROM
+		MENU
+		WHERE ID =
+		#value#
+    </delete>
+</sqlMap>

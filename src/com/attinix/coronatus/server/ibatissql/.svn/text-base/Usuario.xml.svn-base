@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Usuario">
+	<typeAlias alias="Usuario" type="com.attinix.coronatus.client.model.Usuario" />
+
+	<resultMap id="UsuarioResult" class="Usuario">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="login" column="LOGIN" javaType="java.lang.String" />
+		<result property="senha" column="SENHA" javaType="java.lang.String" />
+		<result property="mestre" column="MESTRE" javaType="java.lang.Integer" />
+		<result property="grupoEmpresa" column="GRUPOEMPRESA_ID"
+			select="retrieveGrupoEmpresa" />
+	</resultMap>
+
+	<sql id="selectUsuario">
+		SELECT
+		ID,
+		GRUPOEMPRESA_ID,
+		NOME,
+		LOGIN,
+		SENHA,
+		MESTRE
+		FROM
+		USUARIO
+	</sql>
+
+	<select id="retrieveAllUsuario" resultMap="UsuarioResult">
+		<include refid="selectUsuario" />
+		ORDER BY
+		NOME
+	</select>
+
+	<select id="retrieveUsuario" resultMap="UsuarioResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectUsuario" />
+		WHERE 
+		ID = #value#
+	</select>
+
+	<select id="retrieveUsuarioPorGrupoEmpersa" resultMap="UsuarioResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectUsuario" />
+		WHERE 
+		GRUPOEMPRESA_ID = #value#
+	</select>
+
+	<select id="retrieveUsuarioPorLoginESenha" resultMap="UsuarioResult"
+		parameterClass="Usuario">
+		<include refid="selectUsuario" />
+		WHERE
+		LOGIN = #login#
+		AND SENHA = #senha#
+	</select>
+
+	<insert id="createUsuario" parameterClass="Usuario">
+		INSERT INTO
+		coronatus.USUARIO
+		(GRUPOEMPRESA_ID,
+		NOME,
+		LOGIN,
+		SENHA,
+		MESTRE)
+		VALUES
+		(#grupoEmpresa.id#,
+		#nome#,
+		#login#,
+		#senha#,
+		#mestre#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateUsuario" parameterClass="Usuario">
+		UPDATE
+		coronatus.USUARIO
+		SET
+		GRUPOEMPRESA_ID = #grupoEmpresa.id#,
+		NOME = #nome#,
+		LOGIN = #login#,
+		SENHA = #senha#,
+		MESTRE = #mestre#
+		WHERE
+		ID = #id#
+	</update>
+
+	<delete id="deleteUsuario" parameterClass="Usuario">
+		DELETE FROM
+		coronatus.USUARIO
+		WHERE
+		ID = #id#
+    </delete>
+</sqlMap>

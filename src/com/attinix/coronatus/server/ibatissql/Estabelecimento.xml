@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Estabelecimento">
+	<typeAlias alias="Estabelecimento"
+		type="com.attinix.coronatus.client.model.Estabelecimento" />
+
+	<resultMap id="EstabelecimentoResult" class="Estabelecimento">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="EstabelecimentoEmpresaResult" class="Estabelecimento">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.String" />
+		<result property="empresa" column="EMPRESA_ID" select="retrieveEmpresa" />
+	</resultMap>
+
+	<sql id="selectEstabelecimento">
+		SELECT
+		EST.*
+		FROM
+		ESTABELECIMENTO EST
+    </sql>
+
+	<select id="retrieveAllEstabelecimento" resultMap="EstabelecimentoResult">
+		<include refid="selectEstabelecimento" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEstabelecimento" resultMap="EstabelecimentoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimento" />
+		WHERE
+		ID = #value#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEstabelecimentoPorIdComEmpresa" resultMap="EstabelecimentoEmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimento" />
+		WHERE
+		ID = #value#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEstabelecimentoPorCodigo" resultMap="EstabelecimentoEmpresaResult"
+		parameterClass="java.lang.String">
+		<include refid="selectEstabelecimento" />
+		WHERE
+		CODIGO = #value#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllEstabelecimentoEmpresa" resultMap="EstabelecimentoEmpresaResult">
+		<include refid="selectEstabelecimento" />
+	</select>
+
+	<select id="retrieveEstabelecimentoPorEmpresaId" resultMap="EstabelecimentoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimento" />
+		WHERE
+		EMPRESA_ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoPorEmpresaIdComEmpresa"
+		resultMap="EstabelecimentoEmpresaResult" parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimento" />
+		WHERE
+		EMPRESA_ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoPorEmpresaCodigo" resultMap="EstabelecimentoEmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimento" />
+		INNER JOIN EMPRESA EMP
+		ON EMP.ID = EST.EMPRESA_ID
+		AND EMP.CODIGO =
+		#value#
+	</select>
+
+	<insert id="createEstabelecimento" parameterClass="Estabelecimento">
+		INSERT INTO
+		ESTABELECIMENTO
+		(EMPRESA_ID,
+		CODIGO)
+		VALUES
+		(#empresa.id#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateEstabelecimento" parameterClass="Estabelecimento">
+		UPDATE
+		ESTABELECIMENTO
+		SET
+		EMPRESA_ID = #empresa.id#,
+		CODIGO = #codigo#
+		WHERE ID
+		= #id#
+    </update>
+
+	<delete id="deleteEstabelecimento" parameterClass="java.lang.Integer">
+		DELETE FROM
+		ESTABELECIMENTO
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

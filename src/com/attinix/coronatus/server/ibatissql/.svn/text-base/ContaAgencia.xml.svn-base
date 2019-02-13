@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ContaAgencia">
+	<typeAlias alias="ContaAgencia"
+		type="com.attinix.coronatus.client.model.ContaAgencia" />
+
+	<resultMap id="ContaAgenciaResult" class="ContaAgencia">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="numero" column="NUMERO" javaType="java.lang.String" />
+		<result property="agencia" column="AGENCIA_ID" select="retrieveAgencia" />
+		<result property="empresa" column="EMPRESA_ID" select="retrieveEmpresa" />
+	</resultMap>
+
+	<sql id="selectContaAgencia">
+		SELECT
+		*
+		FROM
+		CONTAAGENCIA
+    </sql>
+
+	<select id="retrieveAllContaAgencia" resultMap="ContaAgenciaResult">
+		<include refid="selectContaAgencia" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllContaAgenciaPorEmpresaAgencia" resultMap="ContaAgenciaResult"
+		parameterClass="ContaAgencia">
+		<include refid="selectContaAgencia" />
+		WHERE
+		EMPRESA_ID = #empresa.id#
+		AND AGENCIA_ID = #agencia.id#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveContaAgencia" resultMap="ContaAgenciaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectContaAgencia" />
+		WHERE
+		ID = #id#
+	</select>
+
+	<select id="retrieveContaAgenciaEmpresa" resultMap="ContaAgenciaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCidade" />
+		WHERE
+		ESTADO_ID = #value#
+	</select>
+
+	<insert id="createContaAgencia" parameterClass="ContaAgencia">
+		INSERT INTO
+		CONTAAGENCIA
+		(AGENCIA_ID,
+		EMPRESA_ID,
+		NUMERO,
+		TITULAR)
+		VALUES
+		(#agencia.id#,
+		#empresa.id#,
+		#numero#,
+		#titular#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateContaAgencia" parameterClass="ContaAgencia">
+		UPDATE
+		CONTAAGENCIA
+		SET
+		EMPRESA_ID = #empresa.id#,
+		AGENCIA_ID = #agencia.id#,
+		NUMERO = #numero#,
+		TITULAR = #titular#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteContaAgencia" parameterClass="java.lang.Integer">
+		DELETE FROM
+		CONTAAGENCIA
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

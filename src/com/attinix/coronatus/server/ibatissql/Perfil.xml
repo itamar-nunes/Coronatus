@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Perfil">
+	<typeAlias alias="Perfil" type="com.attinix.coronatus.client.model.Perfil" />
+	<typeAlias alias="Menu" type="com.attinix.coronatus.client.model.Menu" />
+	<typeAlias alias="PerfilMenu"
+		type="com.attinix.coronatus.client.model.PerfilMenu" />
+
+	<resultMap id="PerfilResult" class="Perfil">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="PerfilMenuResult" class="Perfil" extends="PerfilResult">
+		<result property="menus" column="ID" select="retrieveMenuPorPerfilId" />
+	</resultMap>
+
+	<sql id="selectPerfil">
+		SELECT
+		PERFIL.*
+		FROM
+		PERFIL
+    </sql>
+
+	<select id="retrieveAllPerfil" resultMap="PerfilResult">
+		<include refid="selectPerfil" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrievePerfilMenu" resultMap="PerfilMenuResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectPerfil" />
+		INNER JOIN perfilmenu
+		on perfilmenu.Perfil_id = PERFIL.ID
+		and
+		perfilmenu.Perfil_id = #value#
+		group by
+		perfilmenu.Perfil_id
+		order by
+		perfilmenu.Perfil_id
+	</select>
+
+	<select id="retrievePerfil" resultMap="PerfilResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectPerfil" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<insert id="createPerfil" parameterClass="Perfil">
+		INSERT INTO
+		PERFIL
+		(NOME)
+		VALUES
+		(#nome#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updatePerfil" parameterClass="Perfil">
+		UPDATE
+		PERFIL
+		SET
+		NOME =
+		#nome#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deletePerfil" parameterClass="java.lang.Integer">
+		DELETE FROM
+		PERFIL
+		WHERE
+		ID = #value#
+    </delete>
+
+	<delete id="deleteAllPerfilMenu" parameterClass="java.lang.Integer">
+		DELETE FROM
+		PERFILMENU
+		WHERE
+		PERFIL_ID = #value#
+    </delete>
+
+	<insert id="createPerfilMenu" parameterClass="PerfilMenu">
+		INSERT INTO
+		PERFILMENU
+		(PERFIL_ID, MENU_ID)
+		VALUES
+		(#perfil.id#, #menu.id#)
+    </insert>
+</sqlMap>

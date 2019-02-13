@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Acesso">
+	<typeAlias alias="Acesso" type="com.attinix.coronatus.client.model.Acesso" />
+
+	<resultMap id="AcessoResult" class="Acesso">
+		<result property="usuario" column="USUARIO_ID" select="retrieveUsuario" />
+		<result property="perfil" column="PERFIL_ID" select="retrievePerfil" />
+		<result property="empresa" column="EMPRESA_ID" select="retrieveEmpresa" />
+	</resultMap>
+
+	<sql id="selectAcesso">
+		SELECT
+		ACESSO.*,
+		USUARIO.GRUPOEMPRESA_ID,
+		USUARIO.NOME AS USUARIO,
+		LOGIN,
+		NOMEFANTASIA,
+		PERFIL.NOME AS PERFIL
+		FROM ACESSO
+		INNER JOIN USUARIO ON
+		ACESSO.USUARIO_ID=USUARIO.ID
+		INNER JOIN PERFIL ON PERFIL_ID = PERFIL.ID
+		INNER JOIN EMPRESA ON EMPRESA_ID = EMPRESA.ID 
+    </sql>
+
+	<select id="retrieveAllAcesso" resultMap="AcessoResult">
+		<include refid="selectAcesso" />
+		ORDER BY
+		USUARIO, NOMEFANTASIA, PERFIL
+	</select>
+
+	<select id="retrieveAcesso" resultMap="AcessoResult"
+		parameterClass="Acesso">
+		<include refid="selectAcesso" />
+		WHERE USUARIO_ID = #usuario.id# AND
+		EMPRESA_ID = #empresa.id# AND
+		PERFIL_ID = #perfil.id#
+	</select>
+
+	<insert id="createAcesso" parameterClass="Acesso">
+		INSERT INTO
+		ACESSO
+		(USUARIO_ID, 
+		PERFIL_ID, 
+		EMPRESA_ID)
+		VALUES
+		(#usuario.id#, 
+		#perfil.id#,
+		#empresa.id#)
+    </insert>
+	<update id="updateAcesso" parameterClass="Acesso">
+		UPDATE ACESSO
+		SET
+		PERFIL_ID = #perfil.id#
+		WHERE USUARIO_ID = #usuario.id# AND
+		EMPRESA_ID =
+		#empresa.id#
+	</update>
+
+	<delete id="deleteAcesso" parameterClass="Acesso">
+		DELETE FROM
+		ACESSO
+		WHERE
+		USUARIO_ID = #usuario.id# AND
+		EMPRESA_ID = #empresa.id# AND
+		PERFIL_ID =
+		#perfil.id#
+    </delete>
+</sqlMap>

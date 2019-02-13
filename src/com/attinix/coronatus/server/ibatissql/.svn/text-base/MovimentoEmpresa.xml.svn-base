@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MovimentoEmpresa">
+	<typeAlias alias="MovimentoEmpresa"
+		type="com.attinix.coronatus.client.model.MovimentoEmpresa" />
+
+	<resultMap id="MovimentoEmpresaResult" class="MovimentoEmpresa">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="autorizacao" column="AUTORIZACAO" javaType="java.lang.String" />
+		<result property="valorBruto" column="VALORBRUTO" javaType="java.lang.Double" />
+		<result property="valorDesconto" column="VALORDESCONTO"
+			javaType="java.lang.Double" />
+		<result property="valorLiquido" column="VALORLIQUIDO" javaType="java.lang.Double" />
+		<result property="dataMovimentacao" column="DATAMOVIMENTACAO"
+			javaType="java.util.Date" />
+		<result property="situacao" column="SITUACAO" javaType="java.lang.Integer" />
+		<result property="numeroCVNSU" column="NUMEROCVNSU" javaType="java.lang.String" />
+		<result property="parcela" column="PARCELA" javaType="java.lang.Integer" />
+		<result property="totalParcela" column="TOTALPARCELA" javaType="java.lang.Integer" />
+		<result property="terminal" column="TERMINAL_ID" select="retrieveTerminal" />
+		<result property="cartao" column="CARTAO_ID"
+			select="retrieveCartaoPorIdComAdministradora" />
+		<result property="estabelecimento" column="ESTABELECIMENTO_ID"
+			select="retrieveEstabelecimentoPorIdComEmpresa" />
+	</resultMap>
+
+	<sql id="selectMovimentoEmpresa">
+		SELECT
+		*
+		FROM
+		MOVIMENTOEMPRESA ME
+	</sql>
+
+	<select id="retrieveAllMovimentoEmpresa" resultMap="MovimentoEmpresaResult">
+		<include refid="selectMovimentoEmpresa" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveMovimentoEmpresa" resultMap="MovimentoEmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectMovimentoEmpresa" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select
+		id="retrieveMovimentoEmpresaPorCartaoEstabelecimentoTerminalDataMovimentacaoParcelaNumeroCVNSU"
+		resultMap="MovimentoEmpresaResult" parameterClass="MovimentoEmpresa">
+		<include refid="selectMovimentoEmpresa" />
+		WHERE
+		CARTAO_ID = #cartao.id#
+		AND ESTABELECIMENTO_ID =
+		#estabelecimento.id#
+		AND DATAMOVIMENTACAO = #dataMovimentacao#
+		AND
+		PARCELA = #parcela#
+		AND NUMEROCVNSU = #numeroCVNSU#
+	</select>
+
+	<select id="retrieveMovimentoEmpresaPorSituacoesDif4Empresas"
+		resultMap="MovimentoEmpresaResult" parameterClass="list">
+		<include refid="selectMovimentoEmpresa" />
+		INNER JOIN
+		ESTABELECIMENTO EST
+		ON ME.ESTABELECIMENTO_ID = EST.ID
+		INNER JOIN EMPRESA EMP
+		ON
+		EST.EMPRESA_ID = EMP.ID
+		AND EMP.ID IN
+		<iterate open="(" close=")" conjunction=",">
+			#lstEmpresasCartoes[].empresa#
+          </iterate>
+		AND CARTAO_ID IN
+		<iterate open="(" close=")" conjunction=",">
+			#lstEmpresasCartoes[].cartao#
+        </iterate>
+		WHERE ME.SITUACAO != 4
+	</select>
+
+	<insert id="createMovimentoEmpresa" parameterClass="MovimentoEmpresa">
+		INSERT INTO
+		MOVIMENTOEMPRESA
+		(ESTABELECIMENTO_ID,
+		CARTAO_ID,
+		TERMINAL_ID,
+		AUTORIZACAO,
+		VALORBRUTO,
+		VALORLIQUIDO,
+		VALORDESCONTO,
+		PARCELA,
+		TOTALPARCELA,
+		DATAMOVIMENTACAO,
+		SITUACAO,
+		NUMEROCVNSU)
+		VALUES
+		(#estabelecimento.id#,
+		#cartao.id#,
+		#terminal.id#,
+		#autorizacao#,
+		#valorBruto#,
+		#valorLiquido#,
+		#valorDesconto#,
+		#parcela#,
+		#totalParcela#,
+		#dataMovimentacao#,
+		#situacao#,
+		#numeroCVNSU#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateMovimentoEmpresaSituacao" parameterClass="MovimentoEmpresa">
+		UPDATE
+		MOVIMENTOEMPRESA
+		SET
+		SITUACAO = #situacao#
+		WHERE
+		ID = #id#
+    </update>
+
+	<update id="updateMovimentoEmpresa" parameterClass="MovimentoEmpresa">
+		UPDATE
+		MOVIMENTOEMPRESA
+		SET
+		AUTORIZACAO = #autorizacao#,
+		VALORBRUTO =
+		#valorBruto#,
+		VALORDESCONTO = #valorDesconto#,
+		SITUACAO = #situacao#,
+		NUMEROCVNSU = #numeroCVNSU#,
+		TOTALPARCELA = #totalParcela#,
+		VALORLIQUIDO = #valorLiquido#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteMovimentoEmpresa" parameterClass="java.lang.Integer">
+		DELETE FROM
+		MOVIMENTOEMPRESA
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GrupoEmpresa">
+	<typeAlias alias="GrupoEmpresa"
+		type="com.attinix.coronatus.client.model.GrupoEmpresa" />
+
+	<resultMap id="GrupoEmpresaResult" class="GrupoEmpresa">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="pastaUpload" column="PASTAUPLOAD" javaType="java.lang.String" />
+	</resultMap>
+
+	<sql id="selectGrupoEmpresa">
+		SELECT * FROM GRUPOEMPRESA
+    </sql>
+
+	<select id="retrieveAllGrupoEmpresa" resultMap="GrupoEmpresaResult">
+		<include refid="selectGrupoEmpresa" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveGrupoEmpresa" resultMap="GrupoEmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectGrupoEmpresa" />
+		WHERE ID = #value#
+	</select>
+
+	<insert id="createGrupoEmpresa" parameterClass="GrupoEmpresa">
+		INSERT INTO
+		GRUPOEMPRESA
+		(NOME,
+		PASTAUPLOAD)
+		VALUES
+		(#nome#,
+		#pastaUpload#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateGrupoEmpresa" parameterClass="GrupoEmpresa">
+		UPDATE
+		GRUPOEMPRESA
+		SET
+		NOME = #nome#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteGrupoEmpresa" parameterClass="java.lang.Integer">
+		DELETE FROM
+		GRUPOEMPRESA
+		WHERE ID = #id#
+    </delete>
+</sqlMap>

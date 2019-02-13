@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Pais">
+	<typeAlias alias="Pais" type="com.attinix.coronatus.client.model.Pais" />
+
+	<resultMap id="PaisResult" class="Pais">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="nacionalidade" column="NACIONALIDADE"
+			javaType="java.lang.String" />
+		<result property="sigla" column="SIGLA" javaType="java.lang.String" />
+	</resultMap>
+
+	<sql id="selectPais">
+		SELECT * FROM PAIS
+    </sql>
+
+	<select id="retrieveAllPais" resultMap="PaisResult">
+		<include refid="selectPais" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrievePais" resultMap="PaisResult" parameterClass="java.lang.Integer">
+		<include refid="selectPais" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<insert id="createPais" parameterClass="Pais">
+		INSERT INTO
+		PAIS
+		(NOME,
+		NACIONALIDADE,
+		SIGLA)
+		VALUES
+		(#nome#,
+		#nacionalidade#,
+		#sigla#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updatePais" parameterClass="Pais">
+		UPDATE
+		PAIS
+		SET
+		NOME =
+		#nome#,
+		NACIONALIDADE = #nacionalidade#,
+		SIGLA = #sigla#
+		WHERE
+		ID = #id#
+	</update>
+
+	<delete id="deletePais" parameterClass="java.lang.Integer">
+		DELETE FROM
+		PAIS
+		WHERE
+		ID =
+		#value#
+    </delete>
+</sqlMap>

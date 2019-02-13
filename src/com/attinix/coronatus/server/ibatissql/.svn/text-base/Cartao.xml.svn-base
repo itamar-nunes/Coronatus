@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Cartao">
+	<typeAlias alias="Cartao" type="com.attinix.coronatus.client.model.Cartao" />
+
+	<resultMap id="CartaoResult" class="Cartao">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="tipo" column="TIPO" javaType="java.lang.Integer" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.Integer" />
+	</resultMap>
+
+	<resultMap id="CartaoAdministradoraResult" extends="CartaoResult"
+		class="Cartao">
+		<result property="administradora" column="ADMINISTRADORA_ID"
+			select="retrieveAdministradora" />
+	</resultMap>
+
+	<sql id="selectCartao">
+		SELECT
+		*
+		FROM
+		CARTAO
+    </sql>
+
+	<select id="retrieveAllCartao" resultMap="CartaoAdministradoraResult">
+		<include refid="selectCartao" />
+		ORDER
+		BY ADMINISTRADORA_ID, ID
+	</select>
+
+	<select id="retrieveCartao" resultMap="CartaoAdministradoraResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCartao" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveCartaoPorIdComAdministradora" resultMap="CartaoAdministradoraResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCartao" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveCartaoPorCodigo" resultMap="CartaoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCartao" />
+		WHERE CODIGO = #value#
+	</select>
+
+	<select id="retrieveCartaoPorAdministradoraETipo" resultMap="CartaoResult"
+		parameterClass="Cartao">
+		<include refid="selectCartao" />
+		WHERE
+		ADMINISTRADORA_ID = #administradora.id#
+		AND TIPO = #tipo#
+	</select>
+
+	<select id="retrieveAllCartaoAdministradora" resultMap="CartaoAdministradoraResult">
+		<include refid="selectCartao" />
+		ORDER BY
+		ADMINISTRADORA_ID,ID
+	</select>
+
+	<select id="retrieveCartaoAdministradora" resultMap="CartaoAdministradoraResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCartao" />
+		WHERE
+		ADMINISTRADORA_ID = #value#
+	</select>
+
+	<insert id="createCartao" parameterClass="Cartao">
+		INSERT INTO
+		CARTAO
+		(ADMINISTRADORA_ID,
+		NOME,
+		TIPO,
+		CODIGO)
+		VALUES
+		(#administradora.id#,
+		#nome#,
+		#tipo#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateCartao" parameterClass="Cartao">
+		UPDATE
+		CARTAO
+		SET
+		ADMINISTRADORA_ID = #administradora.id#,
+		NOME = #nome#,
+		TIPO = #tipo#,
+		CODIGO = #codigo#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteCartao" parameterClass="java.lang.Integer">
+		DELETE FROM
+		CARTAO
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

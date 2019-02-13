@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/37/trunk/coronatus/src/com/attinix/coronatus/server/guice
+END
+Modulo.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/guice/Modulo.java
+END
+GuiceServlet.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/37/trunk/coronatus/src/com/attinix/coronatus/server/guice/GuiceServlet.java
+END
+GuiceListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/guice/GuiceListener.java
+END

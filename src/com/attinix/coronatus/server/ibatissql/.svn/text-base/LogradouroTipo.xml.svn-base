@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LogradouroTipo">
+	<typeAlias alias="LogradouroTipo"
+		type="com.attinix.coronatus.client.model.LogradouroTipo" />
+
+	<resultMap id="LogradouroTipoResult" class="LogradouroTipo">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="nome" javaType="java.lang.String" />
+		<result property="sigla" column="SIGLA" javaType="java.lang.String" />
+	</resultMap>
+
+	<sql id="selectLogradouroTipo">
+		SELECT * FROM LOGRADOUROTIPO
+    </sql>
+
+	<select id="retrieveAllLogradouroTipo" resultMap="LogradouroTipoResult">
+		<include refid="selectLogradouroTipo" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveLogradouroTipo" resultMap="LogradouroTipoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectLogradouroTipo" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveLogradouroTipoSigla" resultMap="LogradouroTipoResult"
+		parameterClass="java.lang.String">
+		<include refid="selectLogradouroTipo" />
+		WHERE
+		SIGLA = #value#
+	</select>
+
+	<insert id="createLogradouroTipo" parameterClass="LogradouroTipo">
+		INSERT INTO
+		LOGRADOUROTIPO
+		(SIGLA,
+		NOME)
+		VALUES
+		(#sigla#,
+		#nome#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateLogradouroTipo" parameterClass="LogradouroTipo">
+		UPDATE
+		LogradouroTipo
+		SET
+		SIGLA = #sigla#,
+		NOME = #nome#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteLogradouroTipo" parameterClass="java.lang.Integer">
+		DELETE FROM
+		LOGRADOUROTIPO
+		WHERE ID = #value#
+    </delete>
+</sqlMap>

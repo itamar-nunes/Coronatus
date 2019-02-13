@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Endereco">
+	<typeAlias alias="Endereco"
+		type="com.attinix.coronatus.client.model.Endereco" />
+
+	<resultMap id="EnderecoResult" class="Endereco">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="numero" column="NUMERO" javaType="java.lang.String" />
+		<result property="cep" column="CEP" javaType="java.lang.String" />
+		<result property="complemento" column="COMPLEMENTO" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="EnderecoLogradouroResult" class="Endereco">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="numero" column="NUMERO" javaType="java.lang.String" />
+		<result property="cep" column="CEP" javaType="java.lang.String" />
+		<result property="complemento" column="COMPLEMENTO" javaType="java.lang.String" />
+		<result property="logradouro" column="LOGRADOURO_ID" select="retrieveLogradouroByID" />
+	</resultMap>
+
+	<sql id="selectEndereco">
+		SELECT * FROM ENDERECO
+    </sql>
+
+	<select id="retrieveAllEndereco" resultMap="EnderecoResult">
+		<include refid="selectEndereco" />
+		ORDER BY ID
+	</select>
+
+	<select id="retrieveAllEnderecoLogradouro" resultMap="EnderecoLogradouroResult">
+		<include refid="selectEndereco" />
+		ORDER BY ID
+	</select>
+
+	<select id="retrieveEnderecoByID" resultMap="EnderecoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEndereco" />
+		WHERE ID = #value#
+		ORDER BY ID
+	</select>
+
+	<select id="retrieveEndereco" resultMap="EnderecoResult"
+		parameterClass="Endereco">
+		<include refid="selectEndereco" />
+		WHERE ID = #id#
+	</select>
+
+	<select id="retrieveEnderecoLogradouro" resultMap="EnderecoLogradouroResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEndereco" />
+		WHERE Logradouro_ID = #value#
+	</select>
+
+	<insert id="createEndereco" parameterClass="Endereco">
+		INSERT INTO
+		ENDERECO
+		(LOGRADOURO_ID, 
+		NUMERO, 
+		CEP, 
+		COMPLEMENTO)
+		VALUES
+		(#logradouro.id#, 
+		#numero#, 
+		#cep#, 
+		#complemento#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateEndereco" parameterClass="Endereco">
+		UPDATE
+		ENDERECO
+		SET
+		LOGRADOURO_ID = #logradouro.id#,
+		NUMERO = #numero#,
+		CEP = #cep#,
+		COMPLEMENTO = #complemento#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteEndereco" parameterClass="java.lang.Integer">
+		DELETE FROM
+		ENDERECO
+		WHERE ID = #value#
+    </delete>
+</sqlMap>

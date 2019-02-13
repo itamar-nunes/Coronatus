@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Agencia">
+	<typeAlias alias="Agencia"
+		type="com.attinix.coronatus.client.model.Agencia" />
+
+	<resultMap id="AgenciaResult" class="Agencia">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.String" />
+		<result property="banco" column="BANCO_ID" select="retrieveBanco" />
+	</resultMap>
+
+	<sql id="selectAgencia">
+		SELECT
+		*
+		FROM
+		AGENCIA
+    </sql>
+
+	<select id="retrieveAllAgencia" resultMap="AgenciaResult">
+		<include refid="selectAgencia" />
+		ORDER BY
+		BANCO_ID,ID
+	</select>
+
+	<select id="retrieveAgencia" resultMap="AgenciaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectAgencia" />
+		WHERE
+		ID = #id#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllAgenciaBanco" resultMap="AgenciaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectAgencia" />
+		WHERE
+		BANCO_ID = #value#
+	</select>
+
+	<insert id="createAgencia" parameterClass="Agencia">
+		INSERT INTO
+		AGENCIA
+		(BANCO_ID,
+		NOME,
+		CODIGO)
+		VALUES
+		(#banco.id#,
+		#nome#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateAgencia" parameterClass="Agencia">
+		UPDATE
+		AGENCIA
+		SET
+		BANCO_ID = #banco.id#,
+		NOME = #nome#,
+		CODIGO = #codigo#
+		WHERE
+		ID = #id#
+	</update>
+
+	<delete id="deleteAgencia" parameterClass="java.lang.Integer">
+		DELETE FROM
+		AGENCIA
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

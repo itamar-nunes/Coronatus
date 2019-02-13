@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.attinix.coronatus.client.view'>
+
+	<g:VerticalPanel ui:field="mainPanel">
+		<g:DisclosurePanel ui:field="pesquisa">
+			<g:FlowPanel>
+				<g:TextBox ui:field="valorPesquisa"></g:TextBox>
+				<g:Button ui:field="botaoPesquisa" text="Pesquisar"></g:Button>
+				<g:Button ui:field="botaoLimparPesquisa" text="Limpar"></g:Button>
+			</g:FlowPanel>
+		</g:DisclosurePanel>
+		<g:HTMLPanel>
+			<table>
+				<tr>
+					<td>
+						<g:Label text="Código"></g:Label>
+					</td>
+					<td>
+						<g:TextBox ui:field="codigo" width="90px"></g:TextBox>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="Nome"></g:Label>
+					</td>
+					<td>
+						<g:TextBox ui:field="nome" width="300px"></g:TextBox>
+					</td>
+				</tr>
+			</table>
+		</g:HTMLPanel>
+		<g:HorizontalPanel>
+			<g:Button text="Inserir" ui:field="butInserir"></g:Button>
+			<g:Button text="Gravar" ui:field="butGravar"></g:Button>
+			<g:Button text="Excluir" ui:field="butExcluir"></g:Button>
+			<g:Button text="Cancelar" ui:field="butCancelar"></g:Button>
+		</g:HorizontalPanel>
+		<c:MessageArea ui:field="messages"></c:MessageArea>
+	</g:VerticalPanel>
+
+</ui:UiBinder>

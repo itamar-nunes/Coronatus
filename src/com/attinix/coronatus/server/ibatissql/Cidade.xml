@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Cidade">
+	<typeAlias alias="Cidade" type="com.attinix.coronatus.client.model.Cidade" />
+
+	<resultMap id="CidadeResult" class="Cidade">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="CidadeEstadoResult" extends="CidadeResult"
+		class="Cidade">
+		<result property="estado" column="ESTADO_ID" select="retrieveEstado" />
+	</resultMap>
+
+	<sql id="selectCidade">
+		SELECT * FROM CIDADE
+    </sql>
+
+	<select id="retrieveAllCidade" resultMap="CidadeResult">
+		<include refid="selectCidade" />
+		ORDER BY ID
+	</select>
+
+	<select id="retrieveAllCidadeEstado" resultMap="CidadeEstadoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCidade" />
+		WHERE
+		ESTADO_ID = #value#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveCidade" resultMap="CidadeResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCidade" />
+		WHERE ID = #id#
+	</select>
+
+	<select id="retrieveCidadeEstado" resultMap="CidadeEstadoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCidade" />
+		WHERE ESTADO_ID = #value#
+	</select>
+
+	<insert id="createCidade" parameterClass="Cidade">
+		INSERT INTO
+		CIDADE
+		(ESTADO_ID, 
+		NOME)
+		VALUES
+		(#estado.id#, 
+		#nome#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateCidade" parameterClass="Cidade">
+		UPDATE
+		CIDADE
+		SET
+		ESTADO_ID = #estado.id#,
+		NOME = #nome#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteCidade" parameterClass="java.lang.Integer">
+		DELETE FROM
+		CIDADE
+		WHERE ID = #value#
+    </delete>
+</sqlMap>

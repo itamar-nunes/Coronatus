@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Empresa">
+	<typeAlias alias="Empresa" type="com.attinix.coronatus.client.model.Empresa" />
+
+	<resultMap id="EmpresaResult" class="Empresa">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="razaoSocial" column="RAZAOSOCIAL" javaType="java.lang.String" />
+		<result property="nomeFantasia" column="NOMEFANTASIA" javaType="java.lang.String" />
+		<result property="responsavel" column="RESPONSAVEL" javaType="java.lang.String" />
+		<result property="cnpj" column="CNPJ" javaType="java.lang.String" />
+		<result property="matriz" column="MATRIZ" javaType="java.lang.Integer" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.Integer" />
+	</resultMap>
+
+	<resultMap id="EmpresaGrupoEnderecoResult" class="Empresa"
+		extends="EmpresaResult">
+		<result property="endereco" column="ENDERECO_ID" select="retrieveEnderecoByID" />
+		<result property="grupo" column="GRUPOEMPRESA_ID" select="retrieveGrupoEmpresaByID" />
+		<result property="estabelecimento" column="ID"
+			select="retrieveEstabelecimentoPorEmpresaId" />
+	</resultMap>
+
+	<sql id="selectEmpresa">
+		SELECT * FROM EMPRESA
+    </sql>
+
+	<select id="retrieveAllEmpresa" resultMap="EmpresaResult">
+		<include refid="selectEmpresa" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllEmpresaGrupoEndereco" resultMap="EmpresaGrupoEnderecoResult">
+		<include refid="selectEmpresa" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEmpresa" resultMap="EmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEmpresa" />
+		WHERE ID = #value#
+	</select>
+
+	<select id="retrieveEmpresaPorCodigo" resultMap="EmpresaGrupoEnderecoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEmpresa" />
+		WHERE CODIGO = #value#
+	</select>
+
+	<select id="retrieveEmpresaGrupo" resultMap="EmpresaGrupoEnderecoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEmpresa" />
+		WHERE ENDERECO_ID = #value#
+	</select>
+
+	<select id="retrieveEmpresaEndereco" resultMap="EmpresaGrupoEnderecoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEmpresa" />
+		WHERE ENDERECO_ID = #value#
+	</select>
+
+	<select id="retrieveEmpresaPorGrupo" resultMap="EmpresaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEmpresa" />
+		WHERE GrupoEmpresa_id = #value#
+	</select>
+
+	<insert id="createEmpresa" parameterClass="Empresa">
+		INSERT INTO
+		EMPRESA
+		(GRUPOEMPRESA_ID,
+		ENDERECO_ID,
+		RAZAOSOCIAL,
+		NOMEFANTASIA,
+		RESPONSAVEL,
+		CNPJ,
+		MATRIZ,
+		CODIGO)
+		VALUES
+		(#grupo.id#,
+		#endereco.id#,
+		#razaoSocial#,
+		#nomeFantasia#,
+		#responsavel#,
+		#cnpj#,
+		#matriz#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateEmpresa" parameterClass="Empresa">
+		UPDATE
+		EMPRESA
+		SET
+		GRUPOEMPRESA_ID = #grupo.id#,
+		ENDERECO_ID = #endereco.id#,
+		RAZAOSOCIAL = #razaoSocial#,
+		NOMEFANTASIA = #nomeFantasia#,
+		RESPONSAVEL =#responsavel#,
+		CNPJ = #cnpj#,
+		MATRIZ = #matriz#,
+		CODIGO = #codigo#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteEmpresa" parameterClass="java.lang.Integer">
+		DELETE FROM
+		EMPRESA
+		WHERE ID = #value#
+    </delete>
+</sqlMap>

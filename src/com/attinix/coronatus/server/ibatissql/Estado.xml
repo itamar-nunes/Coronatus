@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Estado">
+	<typeAlias alias="Estado" type="com.attinix.coronatus.client.model.Estado" />
+
+	<resultMap id="EstadoResult" class="Estado">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="uf" column="UF" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="EstadoPaisResult" extends="EstadoResult"
+		class="Estado">
+		<result property="pais" column="PAIS_ID" select="retrievePais" />
+	</resultMap>
+
+	<sql id="selectEstado">
+		SELECT * FROM Estado
+    </sql>
+
+	<select id="retrieveAllEstado" resultMap="EstadoPaisResult">
+		<include refid="selectEstado" />
+		ORDER BY
+		PAIS_ID, ID
+	</select>
+
+	<select id="retrieveEstado" resultMap="EstadoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstado" />
+		WHERE
+		ID = #id#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllEstadoPais" resultMap="EstadoPaisResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstado" />
+		WHERE
+		PAIS_ID = #value#
+	</select>
+
+	<insert id="createEstado" parameterClass="Estado">
+		INSERT INTO
+		ESTADO
+		(PAIS_ID, 
+		NOME,
+		UF)
+		VALUES
+		(#pais.id#, 
+		#nome#, 
+		#uf#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateEstado" parameterClass="Estado">
+		UPDATE
+		ESTADO
+		SET
+		PAIS_ID = #pais.id#,
+		NOME = #nome#,
+		UF = #uf#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteEstado" parameterClass="java.lang.Integer">
+		DELETE FROM
+		ESTADO
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

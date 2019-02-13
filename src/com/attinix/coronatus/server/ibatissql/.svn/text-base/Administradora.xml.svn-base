@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Administradora">
+	<typeAlias alias="Administradora"
+		type="com.attinix.coronatus.client.model.Administradora" />
+
+	<resultMap id="AdministradoraResult" class="Administradora">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.String" />
+	</resultMap>
+
+	<sql id="selectAdministradora">
+		SELECT * FROM ADMINISTRADORA
+    </sql>
+
+	<select id="retrieveAllAdministradora" resultMap="AdministradoraResult">
+		<include refid="selectAdministradora" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAdministradora" resultMap="AdministradoraResult"
+		parameterClass="Administradora">
+		<include refid="selectAdministradora" />
+		WHERE ID = #id#
+	</select>
+
+	<select id="retrieveAdministradoraPorCodigo" resultMap="AdministradoraResult"
+		parameterClass="java.lang.String">
+		<include refid="selectAdministradora" />
+		WHERE CODIGO = #value#
+	</select>
+	
+	<select id="retrieveAllFilteredAdministradora" resultMap="AdministradoraResult" parameterClass="Administradora">
+	   <include refid="selectAdministradora"/>
+		   <isParameterPresent>
+		      WHERE 1 = 1 
+		      <isNotNull property="codigo">AND CODIGO like #codigo#</isNotNull>
+		      <isNotNull property="nome">AND NOME like #nome#</isNotNull>        
+		   </isParameterPresent>	   
+	</select>
+
+	<insert id="createAdministradora" parameterClass="Administradora">
+		INSERT INTO
+		ADMINISTRADORA
+		(NOME,
+		CODIGO)
+		VALUES
+		(#nome#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateAdministradora" parameterClass="Administradora">
+		UPDATE
+		ADMINISTRADORA
+		SET
+		NOME = #nome#,
+		CODIGO = #codigo#
+		WHERE ID = #id#
+	</update>
+
+	<delete id="deleteAdministradora" parameterClass="Administradora">
+		DELETE FROM
+		ADMINISTRADORA
+		WHERE ID = #id#
+    </delete>
+</sqlMap>

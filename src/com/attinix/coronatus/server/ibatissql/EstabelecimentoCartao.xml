@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EstabelecimentoCartao">
+	<typeAlias alias="EstabelecimentoCartao"
+		type="com.attinix.coronatus.client.model.EstabelecimentoCartao" />
+
+	<resultMap id="EstabelecimentoCartaoResult" class="EstabelecimentoCartao">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="dataDe" column="DATADE" javaType="java.util.Date" />
+		<result property="dataAte" column="DATAATE" javaType="java.util.Date" />
+		<result property="dataCadastro" column="DATACADASTRO" javaType="java.util.Date" />
+		<result property="tipo" column="TIPO" javaType="java.lang.Integer" />
+		<result property="inativo" column="INATIVO" javaType="java.lang.Integer" />
+		<result property="estabelecimento" column="ESTABELECIMENTO_ID"
+			select="retrieveEstabelecimentoPorIdComEmpresa" />
+		<result property="cartao" column="CARTAO_ID"
+			select="retrieveCartaoPorIdComAdministradora" />
+	</resultMap>
+
+	<resultMap id="EstabelecimentoCartaoEstabelecimentoCartaoTaxaResult"
+		class="EstabelecimentoCartao" extends="EstabelecimentoCartaoResult">
+		<result property="estabelecimentosCartoesTaxas" column="ID"
+			select="retrieveAllEstabelecimentoCartaoTaxaPorEstabelecimentoCartaoId" />
+	</resultMap>
+
+	<sql id="selectEstabelecimentoCartao">
+		SELECT
+		*
+		FROM
+		ESTABELECIMENTOCARTAO
+    </sql>
+
+	<select id="retrieveAllEstabelecimentoCartaoAtivo"
+		resultMap="EstabelecimentoCartaoEstabelecimentoCartaoTaxaResult">
+		<include refid="selectEstabelecimentoCartao" />
+		WHERE
+		INATIVO = 0
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEstabelecimentoCartao" resultMap="EstabelecimentoCartaoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimentoCartao" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoEstabelecimentoCartaoTaxa"
+		resultMap="EstabelecimentoCartaoEstabelecimentoCartaoTaxaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimentoCartao" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoPorDataDeAte"
+		resultMap="EstabelecimentoCartaoEstabelecimentoCartaoTaxaResult"
+		parameterClass="EstabelecimentoCartao">
+		<include refid="selectEstabelecimentoCartao" />
+		WHERE
+		ESTABELECIMENTO_ID = #estabelecimento.id#
+		AND CARTAO_ID = #cartao.id#
+        <![CDATA[
+        AND DATADE <= #dataDe#
+        AND DATAATE >= #dataAte#
+        AND TIPO = #tipo#
+        AND INATIVO = #inativo#
+        ]]>
+	</select>
+
+	<insert id="createEstabelecimentoCartao" parameterClass="EstabelecimentoCartao">
+		INSERT INTO
+		ESTABELECIMENTOCARTAO
+		(CARTAO_ID,
+		ESTABELECIMENTO_ID,
+		DATADE,
+		DATAATE,
+		DATACADASTRO,
+		TIPO,
+		INATIVO)
+		VALUES
+		(#cartao.id#,
+		#estabelecimento.id#,
+		#dataDe#,
+		#dataAte#,
+		#dataCadastro#,
+		#tipo#,
+		#inativo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+</sqlMap>

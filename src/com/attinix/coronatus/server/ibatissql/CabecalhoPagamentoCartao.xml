@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CabecalhoPagamentoCartao">
+	<typeAlias alias="CabecalhoPagamentoCartao"
+		type="com.attinix.coronatus.client.model.CabecalhoPagamentoCartao" />
+
+	<resultMap id="CabecalhoPagamentoCartaoResult" class="CabecalhoPagamentoCartao">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="sequencia" column="SEQUENCIA" javaType="java.lang.String" />
+		<result property="cartao" column="CARTAO_ID"
+			select="retrieveCartaoPorIdComAdministradora" />
+		<result property="estabelecimento" column="ESTABELECIMENTO_ID"
+			select="retrieveEstabelecimentoPorIdComEmpresa" />
+	</resultMap>
+
+	<resultMap id="CabecalhoPagamentoCartaoPagamentosCartoesResult"
+		class="CabecalhoPagamentoCartao">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="sequencia" column="SEQUENCIA" javaType="java.lang.String" />
+		<result property="cartao" column="CARTAO_ID"
+			select="retrieveCartaoPorIdComAdministradora" />
+		<result property="estabelecimento" column="ESTABELECIMENTO_ID"
+			select="retrieveEstabelecimento" />
+		<result property="pagamentosCartoes" column="ID"
+			select="retrieveCartaoPorCabecalho" />
+	</resultMap>
+
+	<sql id="selectCabecalhoPagamentoCartao">
+		SELECT
+		*
+		FROM
+		CabecalhoPagamentoCartao
+    </sql>
+
+	<select id="retrieveAllCabecalhoPagamentoCartao" resultMap="CabecalhoPagamentoCartaoResult">
+		<include refid="selectCabecalhoPagamentoCartao" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveCabecalhoPagamentoCartao" resultMap="CabecalhoPagamentoCartaoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCabecalhoPagamentoCartao" />
+		WHERE
+		ID = #value#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveCabecalhoPagamentoCartaoPagamentosCartoes"
+		resultMap="CabecalhoPagamentoCartaoPagamentosCartoesResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectCabecalhoPagamentoCartao" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveCabecalhoPagamentoCartaoPorSequencia"
+		resultMap="CabecalhoPagamentoCartaoResult" parameterClass="java.lang.String">
+		<include refid="selectCabecalhoPagamentoCartao" />
+		WHERE
+		SEQUENCIA = #value#
+	</select>
+
+	<select
+		id="retrieveCabecalhoPagamentoCartaoPorCartaoEstabelecimentoSequencia"
+		resultMap="CabecalhoPagamentoCartaoResult" parameterClass="CabecalhoPagamentoCartao">
+		<include refid="selectCabecalhoPagamentoCartao" />
+		WHERE
+		CARTAO_ID = #cartao.id#
+		AND ESTABELECIMENTO_ID = #estabelecimento.id#
+		AND SEQUENCIA = #sequencia#
+	</select>
+
+	<insert id="createCabecalhoPagamentoCartao" parameterClass="CabecalhoPagamentoCartao">
+		INSERT INTO
+		CabecalhoPagamentoCartao
+		(CARTAO_ID,
+		ESTABELECIMENTO_ID,
+		SEQUENCIA)
+		VALUES
+		(#cartao.id#,
+		#estabelecimento.id#,
+		#sequencia#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateCabecalhoPagamentoCartao" parameterClass="CabecalhoPagamentoCartao">
+		UPDATE
+		CabecalhoPagamentoCartao
+		SET
+		CARTAO_ID = #cartao.id#,
+		ESTABELECIMENTO_ID = #estabelecimento.id#,
+		SEQUENCIA = #sequencia#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteCabecalhoPagamentoCartao" parameterClass="java.lang.Integer">
+		DELETE FROM
+		CABECALHOPAGAMENTOCARTAO
+		WHERE
+		ID = #value#
+    </delete>
+</sqlMap>

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/importation/redecard
+END
+RedeCardDebito.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/importation/redecard/RedeCardDebito.java
+END
+RedeCardCredito.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/importation/redecard/RedeCardCredito.java
+END
+RedeCardPagamento.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/importation/redecard/RedeCardPagamento.java
+END
+RedeCard.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/importation/redecard/RedeCard.java
+END

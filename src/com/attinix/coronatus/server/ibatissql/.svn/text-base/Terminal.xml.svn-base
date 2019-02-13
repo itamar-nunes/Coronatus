@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Terminal">
+	<typeAlias alias="Terminal"
+		type="com.attinix.coronatus.client.model.Terminal" />
+
+	<resultMap id="TerminalResult" class="Terminal">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="descricao" column="DESCRICAO" javaType="java.lang.String" />
+		<result property="codigo" column="CODIGO" javaType="java.lang.String" />
+
+	</resultMap>
+
+	<sql id="selectTerminal">
+		SELECT
+		*
+		FROM
+		TERMINAL
+    </sql>
+
+	<select id="retrieveAllTerminal" resultMap="TerminalResult">
+		<include refid="selectTerminal" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveTerminal" resultMap="TerminalResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectTerminal" />
+		WHERE
+		ID = #id#
+	</select>
+
+	<select id="retrieveTerminalPorCodigo" resultMap="TerminalResult"
+		parameterClass="java.lang.String">
+		<include refid="selectTerminal" />
+		WHERE
+		CODIGO = #value#
+	</select>
+
+	<insert id="createTerminal" parameterClass="Terminal">
+		INSERT INTO
+		TERMINAL
+		(DESCRICAO,
+		CODIGO)
+		VALUES
+		(#descricao#,
+		#codigo#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateTerminal" parameterClass="Terminal">
+		UPDATE
+		TERMINAL
+		SET
+		DESCRICAO=#descricao#,
+		CODIGO = #codigo#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteTerminal" parameterClass="java.lang.Integer">
+		DELETE FROM
+		TERMINAL
+		WHERE ID = #value#
+    </delete>
+</sqlMap>

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/14/trunk/coronatus/src/com/attinix/coronatus/server/ibatis
+END
+IbatisModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/ibatis/IbatisModule.java
+END
+TransactionalInterceptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/ibatis/TransactionalInterceptor.java
+END
+Transactional.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/ibatis/Transactional.java
+END
+ExtendedModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/14/trunk/coronatus/src/com/attinix/coronatus/server/ibatis/ExtendedModule.java
+END
+SqlMapClientProvider.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/7/trunk/coronatus/src/com/attinix/coronatus/server/ibatis/SqlMapClientProvider.java
+END

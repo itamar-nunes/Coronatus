@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao
+END
+EstabelecimentoCartaoTaxaDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/EstabelecimentoCartaoTaxaDao.java
+END
+TerminalDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/TerminalDao.java
+END
+EmpresaDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/EmpresaDao.java
+END
+EstabelecimentoCartaoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/EstabelecimentoCartaoDao.java
+END
+AdminsitradoraDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/AdminsitradoraDao.java
+END
+EstabelecimentoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/EstabelecimentoDao.java
+END
+PagamentoCartaoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/PagamentoCartaoDao.java
+END
+CabecalhoPagamentoCartaoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/CabecalhoPagamentoCartaoDao.java
+END
+CartaoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/CartaoDao.java
+END
+MovimentoEmpresaDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/38/trunk/coronatus/src/com/attinix/coronatus/server/dao/MovimentoEmpresaDao.java
+END

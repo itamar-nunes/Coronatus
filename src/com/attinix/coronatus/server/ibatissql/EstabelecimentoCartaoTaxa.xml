@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EstabelecimentoCartaoTaxa">
+	<typeAlias alias="EstabelecimentoCartaoTaxa"
+		type="com.attinix.coronatus.client.model.EstabelecimentoCartaoTaxa" />
+
+	<resultMap id="EstabelecimentoCartaoTaxaResult" class="EstabelecimentoCartaoTaxa">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="parceladoDe" column="PARCELADODE" javaType="java.lang.Integer" />
+		<result property="parceladoAte" column="PARCELADOATE" javaType="java.lang.Integer" />
+		<result property="percentualTaxa" column="PERCENTUALTAXA"
+			javaType="java.lang.Double" />
+	</resultMap>
+
+	<resultMap id="EstabelecimentoCartaoTaxaEstabelecimentoCartaoResult"
+		class="EstabelecimentoCartaoTaxa" extends="EstabelecimentoCartaoTaxaResult">
+		<result property="estabelecimentoCartao" column="ESTABELECIMENTOCARTAO_ID"
+			select="retrieveEstabelecimentoCartao" />
+	</resultMap>
+
+	<sql id="selectEstabelecimentoCartaoTaxa">
+		SELECT
+		ECT.*
+		FROM
+		ESTABELECIMENTOCARTAOTAXA ECT
+    </sql>
+
+	<select id="retrieveAllEstabelecimentoCartaoTaxa" resultMap="EstabelecimentoCartaoTaxaResult">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoTaxa" resultMap="EstabelecimentoCartaoTaxaResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoTaxaEstabelecimentoCartao"
+		resultMap="EstabelecimentoCartaoTaxaEstabelecimentoCartaoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		WHERE
+		ID = #value#
+	</select>
+
+	<select
+		id="retrieveAllEstabelecimentoCartaoTaxaPorEstabelecimentoCartaoId"
+		resultMap="EstabelecimentoCartaoTaxaResult" parameterClass="java.lang.Integer">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		WHERE
+		ESTABELECIMENTOCARTAO_ID = #value#
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoTaxaPorParceladoDeAte"
+		resultMap="EstabelecimentoCartaoTaxaEstabelecimentoCartaoResult"
+		parameterClass="EstabelecimentoCartaoTaxa">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		WHERE
+		ESTABELECIMENTOCARTAO_ID = #estabelecimentoCartao.id#
+        <![CDATA[
+		AND PARCELADODE >= #parceladoDe#
+		AND PARCELADOATE  <= #parceladoAte#
+		 ]]>
+	</select>
+
+	<select id="retrieveEstabelecimentoCartaoTaxaPorParceladoEDataDeAte"
+		resultMap="EstabelecimentoCartaoTaxaEstabelecimentoCartaoResult"
+		parameterClass="EstabelecimentoCartaoTaxa">
+		<include refid="selectEstabelecimentoCartaoTaxa" />
+		INNER JOIN ESTABELECIMENTOCARTAO EC
+		ON ECT.ESTABELECIMENTOCARTAO_ID =
+		EC.ID
+		AND EC.CARTAO_ID = #estabelecimentoCartao.cartao.id#
+		AND
+		EC.ESTABELECIMENTO_ID = #estabelecimentoCartao.estabelecimento.id#
+		AND
+		EC.TIPO = #estabelecimentoCartao.tipo#
+       <![CDATA[
+        AND EC.DATADE <= #estabelecimentoCartao.dataVigente#
+        AND EC.DATAATE >= #estabelecimentoCartao.dataVigente#
+        ]]>
+		WHERE 
+        <![CDATA[
+		ECT.PARCELADODE <= #totalParcelamento#
+		AND ECT.PARCELADOATE  >= #totalParcelamento#
+		 ]]>
+	</select>
+
+	<insert id="createEstabelecimentoCartaoTaxa" parameterClass="EstabelecimentoCartaoTaxa">
+		INSERT INTO
+		ESTABELECIMENTOCARTAOTAXA
+		(ESTABELECIMENTOCARTAO_ID,
+		PARCELADODE,
+		PARCELADOATE,
+		PERCENTUALTAXA)
+		VALUES
+		(#estabelecimentoCartao.id#,
+		#parceladoDe#,
+		#parceladoAte#,
+		#percentualTaxa#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+</sqlMap>

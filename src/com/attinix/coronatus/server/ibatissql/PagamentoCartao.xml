@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PagamentoCartao">
+	<typeAlias alias="PagamentoCartao"
+		type="com.attinix.coronatus.client.model.PagamentoCartao" />
+
+	<resultMap id="PagamentoCartaoResult" class="PagamentoCartao">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="valorBruto" column="VALORBRUTO" javaType="java.lang.Double" />
+		<result property="valorDesconto" column="VALORDESCONTO"
+			javaType="java.lang.Double" />
+		<result property="valorLiquido" column="VALORLIQUIDO" javaType="java.lang.Double" />
+		<result property="valorPago" column="VALORPAGO" javaType="java.lang.Double" />
+		<result property="parcela" column="PARCELA" javaType="java.lang.Integer" />
+		<result property="totalParcela" column="TOTALPARCELA" javaType="java.lang.Integer" />
+		<result property="dataMovimentacao" column="DATAMOVIMENTACAO"
+			javaType="java.util.Date" />
+		<result property="dataDeposito" column="DATADEPOSITO" javaType="java.util.Date" />
+		<result property="situacao" column="SITUACAO" javaType="java.lang.Integer" />
+		<result property="numeroResumo" column="NUMERORESUMO" javaType="java.lang.String" />
+		<result property="numeroAutorizacao" column="NUMEROAUTORIZACAO"
+			javaType="java.lang.String" />
+		<result property="rejeicao" column="REJEICAO" javaType="java.lang.String" />
+		<result property="numeroCVNSU" column="NUMEROCVNSU" javaType="java.lang.String" />
+
+		<result property="estabelecimentoCartaoTaxa" column="ESTABELECIMENTOCARTAOTAXA_ID"
+			select="retrieveEstabelecimentoCartaoTaxaEstabelecimentoCartao" />
+		<result property="terminal" column="TERMINAL_ID" select="retrieveTerminal" />
+	</resultMap>
+
+	<resultMap id="PagamentoCartaoCabecalhoPagamentoCartaoResult"
+		class="PagamentoCartao" extends="PagamentoCartaoResult">
+		<result property="cabecalhoPagamentoCartao" column="CABECALHOPAGAMENTOCARTAO_ID"
+			select="retrieveCabecalhoPagamentoCartao" />
+	</resultMap>
+
+	<sql id="selectPagamentoCartao">
+		SELECT 
+		PC.* 
+		FROM 
+		PAGAMENTOCARTAO PC
+    </sql>
+
+	<select id="retrieveAllPagamentoCartao" resultMap="PagamentoCartaoResult">
+		<include refid="selectPagamentoCartao" />
+		ORDER BY
+		PC.ID
+	</select>
+
+	<select id="retrievePagamentoCartao" resultMap="PagamentoCartaoResult"
+		parameterClass="PagamentoCartao">
+		<include refid="selectPagamentoCartao" />
+		WHERE 
+		PC.ID = #id#
+	</select>
+
+	<select id="retrievePagamentoCartaoPorCabecalho" resultMap="PagamentoCartaoResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectPagamentoCartao" />
+		WHERE 
+		PC.CABECALHOPAGAMENTOCARTAO_ID = #value#
+	</select>
+
+	<select id="retrievePagamentoCartaoPorSituacoesDif4Empresas"
+		resultMap="PagamentoCartaoCabecalhoPagamentoCartaoResult"
+		parameterClass="list">
+		<include refid="selectPagamentoCartao" />
+		INNER JOIN ESTABELECIMENTOCARTAOTAXA ECT
+		ON
+		PC.ESTABELECIMENTOCARTAOTAXA_ID = ECT.ID
+		INNER JOIN
+		ESTABELECIMENTOCARTAO EC
+		ON ECT.ESTABELECIMENTOCARTAO_ID = EC.ID
+		AND
+		EC.CARTAO_ID IN
+		<iterate open="(" close=")" conjunction=",">
+			#lstEmpresasCartoes[].cartao#
+          </iterate>
+		INNER JOIN ESTABELECIMENTO EST
+		ON EC.ESTABELECIMENTO_ID = EST.ID
+		AND
+		EST.EMPRESA_ID IN
+		<iterate open="(" close=")" conjunction=",">
+			#lstEmpresasCartoes[].empresa#
+          </iterate>
+		WHERE PC.SITUACAO != 4
+	</select>
+
+	<!--
+
+		<iterate prepend="IN" property="empresa" open="(" close=")"
+		conjunction=","> EMP.ID=#[]# </iterate> <select
+		id="retrievePagamentoCartaoPorSituacoes1235Empresas"
+		resultMap="PagamentoCartaoCabecalhoPagamentoCartaoResult"
+		parameterClass="list"> <include refid="selectPagamentoCartao" /> INNER
+		JOIN ESTABELECIMENTO EST ON PC.ESTABELECIMENTO_ID = EST.ID INNER JOIN
+		EMPRESA EMP ON EST.EMPRESA_ID = EMP.ID AND EMP.ID IN <iterate open="("
+		close=")" conjunction=","> #[]# </iterate> WHERE PC.SITUACAO != 4
+		</select>
+	-->
+
+	<!--
+		Nãi vai mais usar <select
+		id="retrievePagamentoCartaoBySequenciaEstabelecimentoAdministradora"
+		resultMap="PagamentoCartao_SequenciaResult"
+		parameterClass="PagamentoCartao"> <include
+		refid="selectPagamentoCartao_Sequencia" /> INNER JOIN ESTABELECIMENTO
+		E ON PC.ESTABELECIMENTO_ID = E.ID AND E.ID = #estabelecimento.id#
+		INNER JOIN ADMINISTRADORA A ON E.ADMINISTRADORA_ID = A.ID AND A.ID =
+		#estabelecimento.administradora.id# WHERE PC.SEQUENCIA = #sequencia#
+		GROUP BY PC.SEQUENCIA </select>
+	-->
+
+	<insert id="createPagamentoCartao" parameterClass="PagamentoCartao">
+		INSERT INTO
+		PAGAMENTOCARTAO
+		(CABECALHOPAGAMENTOCARTAO_ID,
+		TERMINAL_ID,
+		ESTABELECIMENTOCARTAOTAXA_ID,
+		VALORBRUTO,
+		VALORDESCONTO,
+		VALORLIQUIDO,
+		VALORPAGO,
+		PARCELA,
+		TOTALPARCELA,
+		DATAMOVIMENTACAO,
+		DATADEPOSITO,
+		SITUACAO,
+		NUMERORESUMO,
+		NUMEROAUTORIZACAO,
+		REJEICAO,
+		NUMEROCVNSU)
+		VALUES
+		(#cabecalhoPagamentoCartao.id#,
+		#terminal.id#,
+		#estabelecimentoCartaoTaxa.id#,
+		#valorBruto#,
+		#valorDesconto#,
+		#valorLiquido#,
+		#valorPago#,
+		#parcela#,
+		#totalParcela#,
+		#dataMovimentacao#,
+		#dataDeposito#,
+		#situacao#,
+		#numeroResumo#,
+		#numeroAutorizacao#,
+		#rejeicao#,
+		#numeroCVNSU#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<!--
+		Não vai mais existir <update id="updatePagamentoCartao"
+		parameterClass="PagamentoCartao"> UPDATE PAGAMENTOCARTAO PC INNER JOIN
+		ESTABELECIMENTO E ON PC.ESTABELECIMENTO_ID = E.ID AND E.CODIGO =
+		#estabelecimento.codigo# INNER JOIN ADMINISTRADORA A ON
+		E.ADMINISTRADORA_ID = A.ID AND A.NOME = #cartao.administradora.nome#
+		AND PC.SEQUENCIA = #sequencia# AND PC.DATAMOVIMENTACAO =
+		#dataMovimentacao# AND PC.NUMEROCVNSU = #numeroCVNSU# SET
+		PC.TERMINAL_ID = #terminal#, PC.CARTAO_ID = #cartao#,
+		PC.ESTABELECIMENTO_ID = #estabelecimento#, PC.VALOR = #valor#,
+		PC.VALORDESCONTO = #valorDesconto#, PC.PARCELA = #parcela#,
+		PC.DATAMOVIMENTACAO = #dataMovimentacao#, PC.DATADEPOSITO =
+		#dataDeposito#, PC.SITUACAO = #situacao#, PC.NUMERORESUMO =
+		#numeroResumo#, PC.NUMEROAUTORIZACAO = #numeroAutorizacao#,
+		PC.SEQUENCIA = #sequencia#, PC.REJEICAO = #rejeicao#, PC.NUMEROCVNSU =
+		#numeroCVNSU# </update> <delete
+		id="deletePagamentoCartaoBySequenciaEstabelecimentoAdministradora"
+		parameterClass="PagamentoCartao"> DELETE FROM PAGAMENTOCARTAO PC INNER
+		JOIN ESTABELECIMENTO E ON PC.ESTABELECIMENTO_ID = E.ID AND E.CODIGO =
+		#estabelecimento.codigo# INNER JOIN ADMINISTRADORA A ON
+		E.ADMINISTRADORA_ID = A.ID AND A.NOME = #cartao.administradora.nome#
+		WHERE PC.SEQUENCIA = #sequencia# </delete>
+	-->
+
+	<update id="updatePagamentoCartaoSituacao" parameterClass="PagamentoCartao">
+		UPDATE
+		PAGAMENTOCARTAO
+		SET
+		SITUACAO = #situacao#
+		WHERE
+		ID = #id#
+    </update>
+
+	<delete id="deleteAllPagamentoCartao" parameterClass="java.lang.Integer">
+		DELETE FROM
+		PAGAMENTOCARTAO
+		WHERE
+		CABECALHOPAGAMENTOCARTAO_ID = #value#
+    </delete>
+
+	<delete id="deletePagamentoCartao" parameterClass="java.lang.Integer">
+		DELETE FROM
+		PAGAMENTOCARTAO
+		WHERE
+		ID = #value#
+    </delete>
+
+</sqlMap>

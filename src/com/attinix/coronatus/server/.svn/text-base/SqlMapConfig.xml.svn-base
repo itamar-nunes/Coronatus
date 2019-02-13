@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" useStatementNamespaces="false" />
+
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="com.mysql.jdbc.Driver" />
+			<property name="JDBC.ConnectionURL"
+				value="jdbc:mysql://localhost:3306/coronatus"/>
+			<property name="JDBC.Username" value="root" />
+			<property name="JDBC.Password" value="root" />
+			
+			<!--<property name="JDBC.Driver" value="org.h2.Driver" />-->
+			<!--<property name="JDBC.ConnectionURL" value="jdbc:h2:~/coronatus" />-->
+			<!--<property name="JDBC.Username" value="sa" />-->
+			<!--<property name="JDBC.Password" value="" />-->
+		</dataSource>
+	</transactionManager>
+
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Usuario.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/PagamentoCartao.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/MovimentoEmpresa.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Administradora.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/GrupoEmpresa.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Pais.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Estado.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Cidade.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Bairro.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/LogradouroTipo.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Logradouro.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Cartao.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Endereco.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Empresa.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Estabelecimento.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Terminal.xml" />
+	<sqlMap
+		resource="com/attinix/coronatus/server/ibatissql/CabecalhoPagamentoCartao.xml" />
+	<sqlMap
+		resource="com/attinix/coronatus/server/ibatissql/EstabelecimentoCartao.xml" />
+	<sqlMap
+		resource="com/attinix/coronatus/server/ibatissql/EstabelecimentoCartaoTaxa.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Menu.xml" />
+	<!--
+		sqlMap resource="com/attinix/coronatus/server/ibatissql/Perfil.xml" /
+	-->
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Acesso.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Banco.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/Agencia.xml" />
+	<sqlMap resource="com/attinix/coronatus/server/ibatissql/ContaAgencia.xml" />
+</sqlMapConfig>

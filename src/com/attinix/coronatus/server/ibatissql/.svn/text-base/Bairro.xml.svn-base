@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Bairro">
+	<typeAlias alias="Bairro" type="com.attinix.coronatus.client.model.Bairro" />
+
+	<resultMap id="BairroResult" class="Bairro">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+	</resultMap>
+
+	<resultMap id="BairroCidadeResult" class="Bairro">
+		<result property="id" column="ID" javaType="java.lang.Integer" />
+		<result property="nome" column="NOME" javaType="java.lang.String" />
+		<result property="cidade" column="CIDADE_ID" select="retrieveCidadeBYID" />
+	</resultMap>
+
+	<sql id="selectBairro">
+		SELECT * FROM Bairro
+    </sql>
+
+	<select id="retrieveAllBairro" resultMap="BairroResult">
+		<include refid="selectBairro" />
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveAllBairroCidade" resultMap="BairroCidadeResult">
+		<include refid="selectBairro" />
+		WHERE
+		PAIS_ID = #pais.id#
+		ORDER BY
+		ID
+	</select>
+
+	<select id="retrieveBairroByID" resultMap="BairroCidadeResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectBairro" />
+		WHERE ID = #value#
+	</select>
+
+	<select id="retrieveBairro" resultMap="BairroResult"
+		parameterClass="Bairro">
+		<include refid="selectBairro" />
+		WHERE ID = #id#
+	</select>
+
+	<select id="retrieveBairroCidade" resultMap="BairroCidadeResult"
+		parameterClass="java.lang.Integer">
+		<include refid="selectBairro" />
+		WHERE CIDADE_ID = #value#
+	</select>
+
+	<insert id="createBairro" parameterClass="Bairro">
+		INSERT INTO
+		BAIRRO
+		(CIDADE_ID, 
+		NOME)
+		VALUES
+		(#cidade.id#, 
+		#nome#)
+
+		<selectKey keyProperty="id" resultClass="java.lang.Integer"
+			type="post">
+			SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+
+	<update id="updateBairro" parameterClass="Bairro">
+		UPDATE
+		BAIRRO
+		SET
+		CIDADE_ID = #cidade.id#,
+		NOME = #nome#
+		WHERE ID = #id#
+    </update>
+
+	<delete id="deleteBairro" parameterClass="java.lang.Integer">
+		DELETE FROM
+		BAIRRO
+		WHERE ID = #value#
+    </delete>
+</sqlMap>
